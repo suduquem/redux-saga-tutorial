@@ -28,9 +28,9 @@ ReactDOM.render(
   /* Se debe envolver-wrap up el componente App en el componente
   Provider, para pasarle el store */
   <Provider store={store}>
-    <React.StrictMode>
+    <React.Fragment>
       <App />
-    </React.StrictMode>
+    </React.Fragment>
   </Provider>,
   document.getElementById('root')
 );

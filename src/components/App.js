@@ -1,9 +1,15 @@
 // Para conectar el componente App con el store de Redux
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getUserRequest, createUserRequest, deleteUserRequest } from '../actions/users';
+import {
+  getUserRequest,
+  createUserRequest,
+  deleteUserRequest,
+  userError,
+} from '../actions/users';
 import UsersList from './UsersList';
 import NewUserForm from './NewUserForm';
+import { Alert } from 'reactstrap';
 
 /* Cuando se renderiza App, se dispatch la acción getUsersRequest.
 En la saga se está vigilando con el el takeEvery esa acción y se ejecuta
@@ -22,16 +28,34 @@ class App extends Component {
     });
   };
 
-  handleDeleteUserClick = (userId) =>{
+  handleDeleteUserClick = (userId) => {
     this.props.deleteUserRequest(userId);
-  }
+  };
+
+  handleCloseAlert = () => {
+    //Clearing the error
+    this.props.userError({
+      error: '',
+    });
+  };
 
   render() {
     const users = this.props.users; //Es todo el state de users
     return (
       <div style={{ margin: '0 auto', padding: '20px', maxWidth: '600px' }}>
+        {/* Con !! se convierte a booleano, si es un string vacío será false */}
+        <Alert
+          color='danger'
+          isOpen={!!this.props.users.error}
+          toggle={this.handleCloseAlert}
+        >
+          {this.props.users.error}
+        </Alert>
         <NewUserForm onSubmit={this.handleSubmit} />
-        <UsersList onDeleteUser={this.handleDeleteUserClick} users={users.items} />
+        <UsersList
+          onDeleteUser={this.handleDeleteUserClick}
+          users={users.items}
+        />
       </div>
     );
   }
@@ -44,4 +68,5 @@ export default connect(({ users }) => ({ users }), {
   getUserRequest,
   createUserRequest,
   deleteUserRequest,
+  userError,
 })(App);
