@@ -1,7 +1,14 @@
 /* Rule of thumb: nombrar el archivo de sagas de acuerdo a las
 acciones de las cuáles se hará cargo */
 
-import { takeEvery, call, fork, put, takeLatest } from 'redux-saga/effects';
+import {
+  takeEvery,
+  call,
+  fork,
+  put,
+  takeLatest,
+  take,
+} from 'redux-saga/effects';
 import * as actions from '../actions/users';
 import * as api from '../api/users';
 
@@ -43,6 +50,29 @@ function* watchCreateUserRequest() {
   yield takeLatest(actions.Types.CREATE_USER_REQUEST, createUser);
 }
 
-const usersSagas = [fork(watchGetUsersRequest), fork(watchCreateUserRequest)];
+function* deleteUser({ userId }) {
+  try {
+    yield call(api.deleteUser, userId);
+    yield call(getUsers); //To get the updated list of users
+  } catch (error) {
+    console.log('Error deleting user', error);
+  }
+}
+
+function* watchDeleteUserRequest() {
+  while (true) {
+    const action = yield take(actions.Types.DELETE_USER_REQUEST);
+    yield call(deleteUser, {
+      //Blocking-saga
+      userId: action.payload.userId,
+    });
+  }
+}
+
+const usersSagas = [
+  fork(watchGetUsersRequest),
+  fork(watchCreateUserRequest),
+  fork(watchDeleteUserRequest),
+];
 
 export default usersSagas;

@@ -1,7 +1,7 @@
 // Para conectar el componente App con el store de Redux
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getUserRequest, createUserRequest } from '../actions/users';
+import { getUserRequest, createUserRequest, deleteUserRequest } from '../actions/users';
 import UsersList from './UsersList';
 import NewUserForm from './NewUserForm';
 
@@ -22,12 +22,16 @@ class App extends Component {
     });
   };
 
+  handleDeleteUserClick = (userId) =>{
+    this.props.deleteUserRequest(userId);
+  }
+
   render() {
     const users = this.props.users; //Es todo el state de users
     return (
       <div style={{ margin: '0 auto', padding: '20px', maxWidth: '600px' }}>
         <NewUserForm onSubmit={this.handleSubmit} />
-        <UsersList users={users.items} />
+        <UsersList onDeleteUser={this.handleDeleteUserClick} users={users.items} />
       </div>
     );
   }
@@ -39,4 +43,5 @@ ya se puede acceder a los users del state así this.props.users*/
 export default connect(({ users }) => ({ users }), {
   getUserRequest,
   createUserRequest,
+  deleteUserRequest,
 })(App);
