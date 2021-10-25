@@ -1,8 +1,9 @@
 // Para conectar el componente App con el store de Redux
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getUserRequest } from '../actions/users';
+import { getUserRequest, createUserRequest } from '../actions/users';
 import UsersList from './UsersList';
+import NewUserForm from './NewUserForm';
 
 /* Cuando se renderiza App, se dispatch la acción getUsersRequest.
 En la saga se está vigilando con el el takeEvery esa acción y se ejecuta
@@ -13,10 +14,19 @@ class App extends Component {
     this.props.getUserRequest();
   }
 
+  handleSubmit = ({ firstName, lastName }) => {
+    console.log(firstName, lastName);
+    this.props.createUserRequest({
+      firstName,
+      lastName,
+    });
+  };
+
   render() {
     const users = this.props.users; //Es todo el state de users
     return (
       <div style={{ margin: '0 auto', padding: '20px', maxWidth: '600px' }}>
+        <NewUserForm onSubmit={this.handleSubmit} />
         <UsersList users={users.items} />
       </div>
     );
@@ -28,4 +38,5 @@ class App extends Component {
 ya se puede acceder a los users del state así this.props.users*/
 export default connect(({ users }) => ({ users }), {
   getUserRequest,
+  createUserRequest,
 })(App);
