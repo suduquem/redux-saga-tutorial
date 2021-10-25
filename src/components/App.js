@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getUserRequest } from '../actions/users';
+import UsersList from './UsersList';
 
 /* Cuando se renderiza App, se dispatch la acción getUsersRequest.
 En la saga se está vigilando con el el takeEvery esa acción y se ejecuta
@@ -13,12 +14,18 @@ class App extends Component {
   }
 
   render() {
-    return <div> Test </div>;
+    const users = this.props.users; //Es todo el state de users
+    return (
+      <div style={{ margin: '0 auto', padding: '20px', maxWidth: '600px' }}>
+        <UsersList users={users.items} />
+      </div>
+    );
   }
 }
 
-// Se pasa null porque no se requiere map dispatch to props
-// Pero se le pasa la acción getUserRequest al constructor
-export default connect(null, {
-  getUserRequest
+// Se le pasa la acción getUserRequest al constructor
+/* Se quiere hacer map state to props. Al conectar los users con connect
+ya se puede acceder a los users del state así this.props.users*/
+export default connect(({ users }) => ({ users }), {
+  getUserRequest,
 })(App);
